@@ -150,8 +150,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG3), hWnd, (DLGPROC)WndMdlProc3, 0);
                 break;
             case ID_Verify:
-                FindPath(graph, 100, firstVertex, secondVertex);
+                FindPath(graph, 100, firstVertex, secondVertex); //!
+                shortPathLength = 0;
+
+                if (shortPathLength == 0)
+                {
+                    MessageBox(
+                        NULL,
+                        (LPCWSTR)L"The path between the selected vertices was not found",
+                        (LPCWSTR)L"Path not found",
+                        MB_ICONWARNING | MB_OK | MB_DEFBUTTON2
+                    );
+                    break;
+                }
+
                 cycle = FindCycle();
+
+                if (cycleLength == 0)
+                {
+                    MessageBox(
+                        NULL,
+                        (LPCWSTR)L"Cycle containing two path vertices was not found",
+                        (LPCWSTR)L"Cycle not found",
+                        MB_ICONWARNING | MB_OK | MB_DEFBUTTON2
+                    );
+                    break;
+                }
+
                 PrintPath(hWnd);
                 PrintCycle(hWnd);
                 PrintVerticies(hWnd, verticesCount);
