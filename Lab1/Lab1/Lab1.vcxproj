@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lab1.cpp" />
+    <ClCompile Include="Additional.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Lab1.rc" />

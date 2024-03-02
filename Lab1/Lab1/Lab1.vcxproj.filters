@@ -28,11 +28,14 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Additional.h">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lab1.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Additional.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
