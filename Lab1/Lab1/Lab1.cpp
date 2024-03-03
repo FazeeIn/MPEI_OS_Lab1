@@ -150,7 +150,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG3), hWnd, (DLGPROC)WndMdlProc3, 0);
                 break;
             case ID_Verify:
-                FindPath(graph, 100, firstVertex, secondVertex); //!
+                if (verticesCount == 0)
+                {
+                    MessageBox(
+                        NULL,
+                        (LPCWSTR)L"The graph was not entered",
+                        (LPCWSTR)L"Graph not found",
+                        MB_ICONWARNING | MB_OK | MB_DEFBUTTON2
+                    );
+                    break;
+                }
+
+                FindPath(graph, 100, firstVertex, secondVertex); 
                 shortPathLength = 0;
 
                 if (shortPathLength == 0)
