@@ -249,8 +249,8 @@ void FindPath(int matrix[100][100], int VerticesCount, int firstVertex, int seco
                              mov eax, shortPathLength
                              mov ebx, 4
                              mul ebx
-                             add eax, ps
-                             mov ebx, currVertex
+                             add eax, ps //eax двинут на shortPathLength-ый элемент
+                             mov ebx, currVertex // положил текущий элемент
                              mov[eax], ebx
                              mov eax, shortPathLength
                              inc eax

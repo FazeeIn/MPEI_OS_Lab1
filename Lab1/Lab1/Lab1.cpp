@@ -121,29 +121,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
-            case IDM_INPUT_FROM_FILE:
+            case IDM_GRAPH_IMPORT_FROM_FILE:
                 if (GetOpenFileNameA(&ofn)) { LoadGraph(filename); }
                 InvalidateRect(hWnd, NULL, TRUE);
                 ConnectVertices(hWnd, graph, verticesCount);
                 PrintVertices(hWnd, verticesCount);
                 break;
-            case IDM_OUTPUT_TO_FILE:
+            case IDM_GRAPH_EXPORT_TO_FILE:
                 if (GetSaveFileNameA(&ofn)) { SaveGraph(filename); }
                 break;
-            case IDM_DATA_FROM_KEYBOARD_0:
+            case IDM_GRAPH_VERTICES_FROM_KEYBOARD:
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, (DLGPROC)WndMdlProc, 0);
                 InvalidateRect(hWnd, NULL, TRUE);
                 PrintVertices(hWnd,verticesCount);
                 break;
-            case IDM_DATA_FROM_KEYBOARD_1:
+            case IDM_GRAPH_EDGE_FROM_KEYBOARD:
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG2), hWnd, (DLGPROC)WndMdlProc2, 0);
                 InvalidateRect(hWnd, NULL, TRUE);
                 JoinVertices(hWnd, firstVertex, secondVertex, RGB(0, 0, 0));
                 break;
-            case ID_Two_Vertices:
+            case ID_GRAPH_ENTER_TWO_VERTICES:
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG3), hWnd, (DLGPROC)WndMdlProc3, 0);
                 break;
-            case ID_Verify:
+            case ID_EXECUTE:
                 InvalidateRect(hWnd, NULL, TRUE);
 
                 if (verticesCount == 0)
@@ -169,7 +169,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 PrintCycle(hWnd);
                 PrintVertices(hWnd, verticesCount);
                 break;
-            case ID_CLEAR_GRAPH:
+            case ID_GRAPH_CLEAR:
             {
                 ClearGraph();
                 InvalidateRect(hWnd, NULL, TRUE);
@@ -232,11 +232,11 @@ LRESULT CALLBACK WndMdlProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
-        case IDC_BUTTON_OK_MDL:
-            verticesCount = GetDlgItemInt(hWnd, IDC_MDL_EDIT1, NULL, false);
+        case IDC_MDL_D1_BUTTON_OK:
+            verticesCount = GetDlgItemInt(hWnd, IDC_MDL_D1_EDIT1, NULL, false);
             EndDialog(hWnd, 0);
             break;
-        case IDOK_BUTTON_CLOSE_MDL:  
+        case IDOK_MDL_D1_BUTTON_CLOSE:
             EndDialog(hWnd, 0);
             break;
         }
@@ -257,12 +257,12 @@ LRESULT CALLBACK WndMdlProc2(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
-        case IDOK_1:
+        case IDC_MDL_D2_BUTTON_OK:
             EndDialog(hWnd, 0);
-            firstVertex = GetDlgItemInt(hWnd, IDC_EDIT2, NULL, false);
-            secondVertex = GetDlgItemInt(hWnd, IDC_EDIT1, NULL, false);
+            firstVertex = GetDlgItemInt(hWnd, IDC_MDL_D2_EDIT1, NULL, false);
+            secondVertex = GetDlgItemInt(hWnd, IDC_MDL_D2_EDIT2, NULL, false);
             break;
-        case IDCANCEL_1:
+        case IDOK_MDL_D2_BUTTON_CLOSE:
             EndDialog(hWnd, 0);
             break;
         }
@@ -283,12 +283,12 @@ LRESULT CALLBACK WndMdlProc3(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
-        case IDOK_MDL3_1:
+        case IDC_MDL_D3_BUTTON_OK:
             EndDialog(hWnd, 0);
-            firstVertex = GetDlgItemInt(hWnd, IDC_Input_V1, NULL, false);
-            secondVertex = GetDlgItemInt(hWnd, IDC_Input_V2, NULL, false);
+            firstVertex = GetDlgItemInt(hWnd, IDC_MDL_D3_EDIT1, NULL, false);
+            secondVertex = GetDlgItemInt(hWnd, IDC_MDL_D3_EDIT2, NULL, false);
             break;
-        case IDCANCEL_MDL3_1:
+        case IDOK_MDL_D3_BUTTON_CLOSE:
             EndDialog(hWnd, 0);
             break;
         }
