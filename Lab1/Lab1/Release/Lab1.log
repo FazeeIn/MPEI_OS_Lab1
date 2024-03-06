@@ -1,0 +1,4 @@
+﻿  Создание кода
+  Previous IOBJ not found, fall back to full compilation.
+g:\������ ����������\������������\3 ����\6 ���\lab1\lab1\additional.cpp : fatal error C1083: Не удается открыть файл промежуточный код компилятора: Release\Lab1.ipdb: Permission denied,
+LINK : fatal error LNK1257: не удалось создать код

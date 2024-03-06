@@ -1,13 +1,9 @@
 ﻿// Lab1.cpp : Определяет точку входа для приложения.
 
-// 13 вариант лабы
+// 13 вариант лабораторной работы
 //Найти самый длинный цикл, имеющий две общие вершины с путем между двумя заданными вершинами
 
-#include "windows.h"
 #include "Lab1.h"
-#include "Math.h"
-#include "Additional.h"
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -30,7 +26,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LAB1));
-
     MSG msg;
 
     // Цикл основного сообщения:
@@ -58,7 +53,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     WNDCLASSEXW wcex;
 
     wcex.cbSize = sizeof(WNDCLASSEX);
-
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc    = WndProc;
     wcex.cbClsExtra     = 0;
@@ -131,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (GetOpenFileNameA(&ofn)) { LoadGraph(filename); }
                 InvalidateRect(hWnd, NULL, TRUE);
                 ConnectVertices(hWnd, graph, verticesCount);
-                PrintVerticies(hWnd, verticesCount);
+                PrintVertices(hWnd, verticesCount);
                 break;
             case IDM_OUTPUT_TO_FILE:
                 if (GetSaveFileNameA(&ofn)) { SaveGraph(filename); }
@@ -139,7 +133,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_DATA_FROM_KEYBOARD_0:
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, (DLGPROC)WndMdlProc, 0);
                 InvalidateRect(hWnd, NULL, TRUE);
-                PrintVerticies(hWnd,verticesCount);
+                PrintVertices(hWnd,verticesCount);
                 break;
             case IDM_DATA_FROM_KEYBOARD_1:
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG2), hWnd, (DLGPROC)WndMdlProc2, 0);
@@ -150,53 +144,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIALOG3), hWnd, (DLGPROC)WndMdlProc3, 0);
                 break;
             case ID_Verify:
+                InvalidateRect(hWnd, NULL, TRUE);
+
                 if (verticesCount == 0)
                 {
-                    MessageBox(
-                        NULL,
-                        (LPCWSTR)L"The graph was not entered",
-                        (LPCWSTR)L"Graph not found",
-                        MB_ICONWARNING | MB_OK | MB_DEFBUTTON2
-                    );
+                    ShowZeroVerticesWarning();
                     break;
                 }
 
-                FindPath(graph, 100, firstVertex, secondVertex); 
-                shortPathLength = 0;
-
-                if (shortPathLength == 0)
+                FindPath(graph, 100, firstVertex, secondVertex);
+                if (!VerifyPath())
                 {
-                    MessageBox(
-                        NULL,
-                        (LPCWSTR)L"The path between the selected vertices was not found",
-                        (LPCWSTR)L"Path not found",
-                        MB_ICONWARNING | MB_OK | MB_DEFBUTTON2
-                    );
+                    ShowPathWarning();
                     break;
                 }
 
                 cycle = FindCycle();
-
                 if (cycleLength == 0)
                 {
-                    MessageBox(
-                        NULL,
-                        (LPCWSTR)L"Cycle containing two path vertices was not found",
-                        (LPCWSTR)L"Cycle not found",
-                        MB_ICONWARNING | MB_OK | MB_DEFBUTTON2
-                    );
+                    ShowCycleWarning();
                     break;
                 }
-
                 PrintPath(hWnd);
                 PrintCycle(hWnd);
-                PrintVerticies(hWnd, verticesCount);
+                PrintVertices(hWnd, verticesCount);
                 break;
             case ID_CLEAR_GRAPH:
             {
                 ClearGraph();
                 InvalidateRect(hWnd, NULL, TRUE);
-                    break;
+                break;
             }
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
@@ -205,17 +182,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
         {
-            
-            hdc = BeginPaint(hWnd, &ps);
-            // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
-            ConnectVertices(hWnd, graph, verticesCount);
-            PrintVerticies(hWnd, verticesCount);
-            EndPaint(hWnd, &ps);
+                hdc = BeginPaint(hWnd, &ps);
+                ConnectVertices(hWnd, graph, verticesCount);
+                PrintPath(hWnd);
+                PrintCycle(hWnd);
+                PrintVertices(hWnd, verticesCount);
+                EndPaint(hWnd, &ps);
         }
         break;
 
     case WM_CREATE:
-        SetOpenFileNameParams(hWnd);
+        SetOpenFileNameParam(hWnd);
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
@@ -258,15 +235,15 @@ LRESULT CALLBACK WndMdlProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
         case IDC_BUTTON_OK_MDL:
             verticesCount = GetDlgItemInt(hWnd, IDC_MDL_EDIT1, NULL, false);
             EndDialog(hWnd, 0);
-            return 1;
+            break;
         case IDOK_BUTTON_CLOSE_MDL:  
             EndDialog(hWnd, 0);
-            return 1;
+            break;
         }
         break;
     case WM_CLOSE:
         EndDialog(hWnd, 0);
-        return 1;
+        break;
     }
     return 0;
 }
@@ -284,16 +261,15 @@ LRESULT CALLBACK WndMdlProc2(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
             EndDialog(hWnd, 0);
             firstVertex = GetDlgItemInt(hWnd, IDC_EDIT2, NULL, false);
             secondVertex = GetDlgItemInt(hWnd, IDC_EDIT1, NULL, false);
-
-            return 1;
+            break;
         case IDCANCEL_1:
             EndDialog(hWnd, 0);
-            return 1;
+            break;
         }
         break;
     case WM_CLOSE:
         EndDialog(hWnd, 0);
-        return 1;
+        break;
     }
     return 0;
 }
@@ -311,16 +287,15 @@ LRESULT CALLBACK WndMdlProc3(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
             EndDialog(hWnd, 0);
             firstVertex = GetDlgItemInt(hWnd, IDC_Input_V1, NULL, false);
             secondVertex = GetDlgItemInt(hWnd, IDC_Input_V2, NULL, false);
-
-            return 1;
+            break;
         case IDCANCEL_MDL3_1:
             EndDialog(hWnd, 0);
-            return 1;
+            break;
         }
         break;
     case WM_CLOSE:
         EndDialog(hWnd, 0);
-        return 1;
+        break;
     }
     return 0;
 }
